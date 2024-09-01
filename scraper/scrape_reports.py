@@ -28,13 +28,15 @@ def save_links(links: set) -> None:
 
 
 def collect_and_save_json_data(json_links: set) -> None:
+    all_data = []
+    for link in json_links:
+        response = requests.get(link)
+        json_data = response.json()
+        json_data["document"]["source_url"] = link
+        all_data.append(json_data)
+
     with open("data/siemens_reports.json", "w", encoding="utf-8") as file:
-        for link in json_links:
-            response = requests.get(link)
-            json_data = response.json()
-            json_data["document"]["source_url"] = link
-            json.dump(json_data, file, ensure_ascii=False, indent=4)
-            file.write("\n")
+        json.dump(all_data, file, ensure_ascii=False, indent=4)
 
 
 def click_next_button(driver) -> bool:
