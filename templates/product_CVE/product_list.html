@@ -6,25 +6,32 @@
 
 {% block content %}
 <div class="container mt-4">
-  <h3>Product List</h3>
+  <h4>Product List</h4>
   <table class="table table-bordered table-striped">
     <thead>
     <tr>
       <th>#</th>
       <th>Name</th>
-      <th style="width: 150px;">Version Range</th>
-      <th>Product Branch</th>
+      <th style="width: 150px;">Versions</th>
+      <th>CVE IDs</th>
     </tr>
     </thead>
     <tbody>
     {% for product in products %}
     <tr>
       <td>{{ product.product_id }}</td>
-      <td>{{ product.name }}</td>
+      <td>
+        {{ product.name }}
+        {% if product.url %}
+        <span style="color: blue; cursor: help; display: inline;" title="Get support">
+            <a href="{{ product.url }}" target="_blank" style="text-decoration: none; color: blue;">➡️</a>
+        </span>
+        {% endif %}
+      </td>
       <td>{{ product.version_range }}</td>
       <td>
-        {% for branch in product.product_branches.all %}
-          {{ branch.name }}
+        {% for vulnerability in product.vulnerability_products.all %}
+        {{ vulnerability.cve }}{% if not forloop.last %}, {% endif %}
         {% endfor %}
       </td>
     </tr>

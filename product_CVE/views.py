@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.views.generic import ListView
 
-from product_CVE.models import Product, ProductBranch
+from product_CVE.models import Product, Vulnerability
 
 
 def index(request):
@@ -13,5 +13,8 @@ class ProductListView(ListView):
     template_name = "product_list.html"
     context_object_name = "products"
 
-    def get_queryset(self):
-        return Product.objects.prefetch_related("product_branches").all()
+
+class VulnerabilityListView(ListView):
+    model = Vulnerability
+    template_name = "vulnerabilities/vulnerability_list.html"
+    context_object_name = "vulnerabilities"
