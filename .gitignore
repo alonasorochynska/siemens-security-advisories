@@ -3,3 +3,4 @@ venv/
 product_CVE/migrations/
 scraper/data/json_links.txt
 scraper/data/siemens_reports.json
+db.sqlite3

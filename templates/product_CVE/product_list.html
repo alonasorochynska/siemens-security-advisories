@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}
+<title>Products</title>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h3>Product List</h3>
+  <table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>Name</th>
+      <th style="width: 150px;">Version Range</th>
+      <th>Product Branch</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for product in products %}
+    <tr>
+      <td>{{ product.product_id }}</td>
+      <td>{{ product.name }}</td>
+      <td>{{ product.version_range }}</td>
+      <td>
+        {% for branch in product.product_branches.all %}
+          {{ branch.name }}
+        {% endfor %}
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="4" class="text-center">No products available.</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
