@@ -19,12 +19,12 @@
     <tbody>
     {% for product in products %}
     <tr>
-      <td>{{ product.product_id }}</td>
+      <td>{{ product.id }}</td>
       <td>
-        {{ product.name }}
-        {% if product.url %}
+        <a href="{% url 'product_CVE:product_detail' product.id %}">{{ product.name }}</a>
+        {% if product.support_url %}
         <span style="color: blue; cursor: help; display: inline;" title="Get support">
-            <a href="{{ product.url }}" target="_blank" style="text-decoration: none; color: blue;">➡️</a>
+            <a href="{{ product.support_url }}" target="_blank" style="text-decoration: none; color: blue;">➡️</a>
         </span>
         {% endif %}
       </td>

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load remediation_filter %}
+
+{% block title %}
+<title>Product Details - {{ product.name }}</title>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h4>{{ product.name }}</h4>
+  <table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+      <th colspan="3">Information</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+      <td>1</td>
+      <td>Version Range</td>
+      <td>{{ product.version_range }}</td>
+    </tr>
+    {% if product.support_url %}
+    <tr>
+      <td>2</td>
+      <td>Support URL</td>
+      <td><a href="{{ product.support_url }}" target="_blank">{{ product.support_url }}</a></td>
+    </tr>
+    {% endif %}
+    {% if product.remediation_details %}
+    <tr>
+      <td colspan="3"><strong>Remediation Details</strong></td>
+    </tr>
+    {% for detail in product.remediation_details|split_string:";" %}
+    <tr>
+      <td>{{ forloop.counter|add:2 }}</td>
+      <td>Detail</td>
+      <td>{{ detail }}</td>
+    </tr>
+    {% endfor %}
+    {% endif %}
+    </tbody>
+  </table>
+
+
+  <h4>Vulnerabilities</h4>
+  <table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+      <th>CVE ID</th>
+      <th>CWE ID</th>
+      <th>CWE Name</th>
+      <th>Base Score</th>
+      <th>Severity</th>
+      <th>CVSS Vector</th>
+      <th>Summary</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for vulnerability in product.vulnerability_products.all %}
+    <tr>
+      <td>{{ vulnerability.cve }}</td>
+      <td>{{ vulnerability.cwe_id }}</td>
+      <td>{{ vulnerability.cwe_name }}</td>
+      <td>{{ vulnerability.base_score }}</td>
+      <td>{{ vulnerability.base_severity }}</td>
+      <td>{{ vulnerability.vector_string }}</td>
+      <td>{{ vulnerability.summary }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="7" class="text-center">No vulnerabilities associated with this product.</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  {% if product.source_url %}
+  <p><strong>Data provided based on this document:</strong> <a href="{{ product.source_url }}"
+                                                               target="_blank">{{ product.source_url }}</a></p>
+  {% endif %}
+
+  <div class="mt-4">
+    <button class="btn btn-outline-primary" onclick="history.back()">Go Back</button>
+  </div>
+
+</div>
+{% endblock %}

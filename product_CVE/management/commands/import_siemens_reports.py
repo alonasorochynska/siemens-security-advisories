@@ -2,6 +2,7 @@ import json
 from django.core.management.base import BaseCommand
 from product_CVE.models import Product, Vulnerability
 
+
 class Command(BaseCommand):
     help = "Load Siemens reports data from JSON file into the database"
 
@@ -21,44 +22,44 @@ class Command(BaseCommand):
                             name=product_data["name"],
                             product_id=product_data["product_id"],
                             version_range=version_branch.get("name", ""),
+                            source_url=data["document"].get("source_url", "")
                         )
                         current_products[product.product_id] = product
 
-            # Extract URLs from remediations and assign to products
-            for vulnerability_data in data["vulnerabilities"]:
-                for remediation in vulnerability_data.get("remediations", []):
-                    url = remediation.get("url")
-                    if url:
-                        for product_id in remediation["product_ids"]:
-                            product = current_products.get(product_id)
-                            if product:
-                                product.url = url
-                                product.save()
-
-            # Load Vulnerabilities data (create new records)
+            # Load Vulnerabilities data and assign URLs and remediation details to products
             vulnerabilities = []
             for vulnerability_data in data["vulnerabilities"]:
                 score_data = vulnerability_data.get("scores", [{}])[0].get("cvss_v3", {})
-                base_score = score_data.get("baseScore", "")
-                base_severity = score_data.get("baseSeverity", "")
-                vector_string = score_data.get("vectorString", "")
-                cvss_version = score_data.get("version", "")
-                summary = vulnerability_data["notes"][0]["text"]
 
                 vulnerability = Vulnerability.objects.create(
                     cve=vulnerability_data["cve"],
                     cwe_id=vulnerability_data["cwe"]["id"],
                     cwe_name=vulnerability_data["cwe"]["name"],
-                    summary=summary,
-                    base_score=base_score,
-                    base_severity=base_severity,
-                    vector_string=vector_string,
-                    cvss_version=cvss_version,
+                    summary=vulnerability_data["notes"][0]["text"],
+                    base_score=score_data.get("baseScore", ""),
+                    base_severity=score_data.get("baseSeverity", ""),
+                    vector_string=score_data.get("vectorString", ""),
+                    cvss_version=score_data.get("version", "")
                 )
                 vulnerabilities.append(vulnerability)
 
-            affected_products_ids = data["vulnerabilities"][0]["product_status"]["known_affected"]
-            for vulnerability in vulnerabilities:
+                for remediation in vulnerability_data.get("remediations", []):
+                    details = remediation.get("details")
+                    url = remediation.get("url")
+
+                    if details:
+                        for product_id in remediation["product_ids"]:
+                            product = current_products.get(product_id)
+                            if product:
+                                if product.remediation_details:
+                                    product.remediation_details += f"; {details}"
+                                else:
+                                    product.remediation_details = details
+                                if url:
+                                    product.support_url = url
+                                product.save()
+
+                affected_products_ids = vulnerability_data["product_status"]["known_affected"]
                 for product_id in affected_products_ids:
                     product = current_products.get(product_id)
                     if product:
