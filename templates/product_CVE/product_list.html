@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load crispy_forms_filters %}
+
+{% block title %}
+<title>Products</title>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center">
+    <h4>Product List</h4>
+
+    <!-- Search form -->
+    <form class="form-inline d-flex" method="get" action="{% url 'product_CVE:product_list' %}">
+      {{ search_form|crispy }}
+      <input class="btn btn-outline-primary" type="submit" value="🔎">
+      {% if request.GET.product %}
+      <a href="{% url 'product_CVE:product_list' %}" class="btn btn-outline-secondary ml-2">X</a>
+      {% endif %}
+    </form>
+  </div>
+
+  <table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>Name</th>
+      <th style="width: 150px;">Versions</th>
+      <th>CVE IDs</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for product in products %}
+    <tr>
+      <td>{{ product.id }}</td>
+      <td style="white-space: nowrap;">
+        <a href="{% url 'product_CVE:product_detail' product.id %}" class="product-link">{{ product.name }}</a>
+        {% if product.support_url %}
+        <span style="color: blue; cursor: help; display: inline;" title="Get support">
+            <a href="{{ product.support_url }}" target="_blank" style="text-decoration: none; color: blue;">➡️</a>
+        </span>
+        {% endif %}
+      </td>
+      <td>{{ product.version_range }}</td>
+      <td>
+        {% for vulnerability in product.vulnerability_products.all %}
+        {{ vulnerability.cve }}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+      </td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="4" class="text-center">No products available.</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Pagination -->
+  {% include "includes/pagination.html" %}
+
+</div>
+{% endblock %}

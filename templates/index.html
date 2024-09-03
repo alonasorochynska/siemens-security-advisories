@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}
+<title>Welcome to the CVE Product Database</title>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h4>Welcome to the CVE Product Database</h4>
+  <p>This site provides detailed information on various products and their associated vulnerabilities.</p>
+
+  <h4>Site Statistics</h4>
+  <table class="table table-bordered table-striped" style="width: 100%;">
+  <thead>
+    <tr>
+      <th style="width: 50%;">Metric</th>
+      <th style="width: 50%;">Count</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Total Products</td>
+      <td>{{ product_count }}</td>
+    </tr>
+    <tr>
+      <td>Total Vulnerabilities</td>
+      <td>{{ vulnerability_count }}</td>
+    </tr>
+    <tr>
+      <td>Average CVSS Score</td>
+      <td>{{ average_cvss_score|floatformat:1 }}</td>
+    </tr>
+    <tr>
+      <td>Critical Severity Vulnerabilities</td>
+      <td>{{ critical_severity_vulnerabilities_count }}</td>
+    </tr>
+    <tr>
+      <td>High Severity Vulnerabilities</td>
+      <td>{{ high_severity_vulnerabilities_count }}</td>
+    </tr>
+    <tr>
+      <td>Medium Severity Vulnerabilities</td>
+      <td>{{ medium_severity_vulnerabilities_count }}</td>
+    </tr>
+    <tr>
+      <td>Low Severity Vulnerabilities</td>
+      <td>{{ low_severity_vulnerabilities_count }}</td>
+    </tr>
+  </tbody>
+</table>
+
+
+  <h4>Navigation</h4>
+  <li>Use the navigation bar to explore the products, vulnerabilities, and documents available on this site.</li>
+  <li>You can also search for specific products on the Products page and look for specific CVEs on the Vulnerabilities
+    page using the search bar at the top of each respective page.</li>
+  <li>Each product contains very detailed information with all associated CVEs, scores, vectors, remediation details,
+    etc.</li>
+
+</div>
+{% endblock %}
