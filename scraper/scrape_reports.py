@@ -1,3 +1,4 @@
+import os
 from urllib.parse import urljoin
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
@@ -9,6 +10,8 @@ import json
 
 BASE_URL = "https://www.siemens.com"
 REPORT_URL = urljoin(BASE_URL, "global/en/products/services/cert.html#SiemensSecurityAdvisories")
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
 
 def get_json_links(soup: BeautifulSoup) -> set:
@@ -22,7 +25,7 @@ def get_json_links(soup: BeautifulSoup) -> set:
 
 
 def save_links(links: set) -> None:
-    with open("data/json_links.txt", "w") as file:
+    with open(os.path.join(current_dir, "data", "json_links.txt"), "w") as file:
         for link in links:
             file.write(f"{link}\n")
 
@@ -35,7 +38,7 @@ def collect_and_save_json_data(json_links: set) -> None:
         json_data["document"]["source_url"] = link
         all_data.append(json_data)
 
-    with open("data/siemens_reports.json", "w", encoding="utf-8") as file:
+    with open(os.path.join(current_dir, "data", "siemens_reports.json"), "w", encoding="utf-8") as file:
         json.dump(all_data, file, ensure_ascii=False, indent=4)
 
 
