@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load crispy_forms_filters %}
 
 {% block title %}
 <title>Products</title>
@@ -6,7 +7,19 @@
 
 {% block content %}
 <div class="container mt-4">
-  <h4>Product List</h4>
+  <div class="d-flex justify-content-between align-items-center">
+    <h4>Product List</h4>
+
+    <!-- Search form -->
+    <form class="form-inline d-flex" method="get" action="{% url 'product_CVE:product_list' %}">
+      {{ search_form|crispy }}
+      <input class="btn btn-outline-primary" type="submit" value="🔎">
+      {% if request.GET.product %}
+      <a href="{% url 'product_CVE:product_list' %}" class="btn btn-outline-secondary ml-2">X</a>
+      {% endif %}
+    </form>
+  </div>
+
   <table class="table table-bordered table-striped">
     <thead>
     <tr>
@@ -21,7 +34,7 @@
     <tr>
       <td>{{ product.id }}</td>
       <td>
-        <a href="{% url 'product_CVE:product_detail' product.id %}">{{ product.name }}</a>
+        <a href="{% url 'product_CVE:product_detail' product.id %}" class="product-link">{{ product.name }}</a>
         {% if product.support_url %}
         <span style="color: blue; cursor: help; display: inline;" title="Get support">
             <a href="{{ product.support_url }}" target="_blank" style="text-decoration: none; color: blue;">➡️</a>
@@ -42,5 +55,9 @@
     {% endfor %}
     </tbody>
   </table>
+
+  <!-- Pagination -->
+  {% include "includes/pagination.html" %}
+
 </div>
 {% endblock %}

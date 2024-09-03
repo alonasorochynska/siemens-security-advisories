@@ -1,3 +1,80 @@
 body {
-    font-size: 11px;
+    font-size: 12px;
 }
+
+.navbar-brand:hover {
+    background-color: #d1e0f0;
+    border-radius: 5px;
+}
+
+/* Search forms */
+
+input::placeholder {
+    font-size: 12px;
+}
+
+select option:first-child {
+    font-size: 12px;
+    color: #999;
+}
+
+select option:not(:first-child) {
+    font-size: 12px;
+    color: #333;
+}
+
+select option:checked {
+    font-weight: bold;
+}
+
+.cvss-score-input {
+    width: 90px;
+    padding-left: 5px;
+    padding-right: 0px;
+}
+
+/* Pagination */
+
+.page-item.active-page .page-link {
+    background-color: #eaf5ff;
+    pointer-events: none;
+    cursor: not-allowed;
+    color: #605f60;
+}
+
+.page-item.disabled .page-link {
+    background-color: #ffffff;
+    color: #605f60;
+    pointer-events: none;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Severity value */
+
+td.text-high {
+    color: red;
+    font-weight: bold;
+}
+
+td.text-medium {
+    color: #b77702;
+    font-weight: bold;
+}
+
+td.text-low {
+    color: green;
+    font-weight: bold;
+}
+
+/* Product links */
+
+.product-link {
+    color: #0255b0;
+    text-decoration: none;
+}
+
+.product-link:hover {
+    text-decoration: underline;
+}
+
