@@ -20,6 +20,7 @@ class VulnerabilitySearchForm(forms.Form):
     severity = forms.ChoiceField(
         choices=[
             ("", "Severity"),
+            ("CRITICAL", "Critical"),
             ("HIGH", "High"),
             ("MEDIUM", "Medium"),
             ("LOW", "Low"),

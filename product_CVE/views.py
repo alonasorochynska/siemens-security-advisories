@@ -10,6 +10,7 @@ def index(request):
     product_count = Product.objects.count()
     vulnerability_count = Vulnerability.objects.count()
     average_cvss_score = Vulnerability.objects.aggregate(Avg("base_score"))["base_score__avg"]
+    critical_severity_vulnerabilities_count = Vulnerability.objects.filter(base_severity="CRITICAL").count()
     high_severity_vulnerabilities_count = Vulnerability.objects.filter(base_severity="HIGH").count()
     medium_severity_vulnerabilities_count = Vulnerability.objects.filter(base_severity="MEDIUM").count()
     low_severity_vulnerabilities_count = Vulnerability.objects.filter(base_severity="LOW").count()
@@ -18,6 +19,7 @@ def index(request):
         "product_count": product_count,
         "vulnerability_count": vulnerability_count,
         "average_cvss_score": average_cvss_score,
+        "critical_severity_vulnerabilities_count": critical_severity_vulnerabilities_count,
         "high_severity_vulnerabilities_count": high_severity_vulnerabilities_count,
         "medium_severity_vulnerabilities_count": medium_severity_vulnerabilities_count,
         "low_severity_vulnerabilities_count": low_severity_vulnerabilities_count,
@@ -83,7 +85,10 @@ class VulnerabilityListView(ListView):
                 queryset = queryset.filter(base_severity=severity)
 
             if cvss_score is not None:
-                queryset = queryset.filter(base_score__gte=cvss_score, base_score__lt=cvss_score + 1)
+                if cvss_score.is_integer():
+                    queryset = queryset.filter(base_score__gte=cvss_score, base_score__lt=cvss_score + 1)
+                else:
+                    queryset = queryset.filter(base_score=cvss_score)
 
         return queryset
 

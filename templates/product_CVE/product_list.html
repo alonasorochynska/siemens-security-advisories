@@ -33,7 +33,7 @@
     {% for product in products %}
     <tr>
       <td>{{ product.id }}</td>
-      <td>
+      <td style="white-space: nowrap;">
         <a href="{% url 'product_CVE:product_detail' product.id %}" class="product-link">{{ product.name }}</a>
         {% if product.support_url %}
         <span style="color: blue; cursor: help; display: inline;" title="Get support">

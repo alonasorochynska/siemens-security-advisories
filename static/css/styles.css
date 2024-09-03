@@ -52,13 +52,18 @@ select option:checked {
 
 /* Severity value */
 
-td.text-high {
+td.text-critical {
     color: red;
     font-weight: bold;
 }
 
+td.text-high {
+    color: darkorange;
+    font-weight: bold;
+}
+
 td.text-medium {
-    color: #b77702;
+    color: #97a826;
     font-weight: bold;
 }
 

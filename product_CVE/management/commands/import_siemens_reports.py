@@ -7,7 +7,7 @@ class Command(BaseCommand):
     help = "Load Siemens reports data from JSON file into the database"
 
     def handle(self, *args, **kwargs):
-        with open("scraper/data/siemens_reports_one.json", encoding="utf-8") as f:
+        with open("scraper/data/siemens_reports.json", encoding="utf-8") as f:
             data_list = json.load(f)
 
         for data in data_list:
