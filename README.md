@@ -9,13 +9,14 @@ the application's database.
 
 To set up this project on your local machine, follow these steps:
 
-1. Clone the repository:
+### 1. Clone the repository and navigate to the directory:
 
 ```shell
-git clone https://github.com/alonasorochynska/siemens-security-advisories
+git clone https://github.com/alonasorochynska/siemens-security-advisories.git
+cd siemens-security-advisories
 ```
 
-2. Create and activate a virtual environment:
+### 2. Create and activate a virtual environment:
 
 ```shell
 # macOS/Linux
@@ -26,7 +27,7 @@ python -m venv venv
 venv\Scripts\activate
 ```
 
-3. Install the required packages:
+### 3. Install the required packages:
 
 ```shell
 pip install -r requirements.txt
@@ -34,7 +35,7 @@ pip install -r requirements.txt
 
 ## Scraping Security Reports
 
-1. Run the scraping script to scrape reports:
+### 1. Run the scraping script to scrape reports:
 
 ```shell
 python scraper/scrape_reports.py
@@ -44,7 +45,7 @@ python scraper/scrape_reports.py
   first 2 pages by default due to the large volume of data. If you need to scrape more pages, edit the
   scrape_reports.py file by adjusting the value in the while loop within the main function.
 
-2. After the script completes, run the following commands to migrate the database and import the scraped data:
+### 2. After the script completes, run the following commands to migrate the database and import the scraped data:
 
 ```shell
 python manage.py migrate
@@ -72,14 +73,15 @@ python manage.py runserver
 
 Examples of using the application, including screenshots of pages, are located in the [docs](./docs) directory.
 
-Home Page<br>
+**Home Page**<br>
 <img src="docs/home.jpg" alt="Home Page Example" width="500"/>
 
-Products Page<br>
+**Products Page**<br>
   <img src="docs/products.jpg" alt="Products Page Example" width="500"/>
 
-Vulnerabilities Page<br>
+**Vulnerabilities Page**<br>
   <img src="docs/vulnerabilities.jpg" alt="Vulnerabilities Page Example" width="500"/>
 
 <hr>
+
 Enjoy using this site!
