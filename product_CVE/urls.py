@@ -7,7 +7,8 @@ from product_CVE.views import (
     SourceURLListView,
     ProductDetailView,
     VulnerabilityDetailView,
-    get_cvss_details
+    get_cvss_details,
+    CVSSSearchListView,
 )
 
 urlpatterns = [
@@ -18,6 +19,7 @@ urlpatterns = [
     path("vulnerability/<int:pk>/", VulnerabilityDetailView.as_view(), name="vulnerability_detail"),
     path("documents/", SourceURLListView.as_view(), name="source_url_list"),
     path("get_cvss_details/", get_cvss_details, name="get_cvss_details"),
+    path("search_by_cvss/", CVSSSearchListView.as_view(), name="search_by_cvss"),
 ]
 
 app_name = "product_CVE"

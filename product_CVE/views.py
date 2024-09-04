@@ -1,9 +1,10 @@
+from django.core.paginator import Paginator
 from django.db.models import Avg
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
 
-from product_CVE.forms import ProductSearchForm, VulnerabilitySearchForm
+from product_CVE.forms import ProductSearchForm, VulnerabilitySearchForm, CVSSSearchForm
 from product_CVE.models import Product, Vulnerability
 from product_CVE.utils import explain_cvss_vector
 
@@ -115,3 +116,37 @@ def get_cvss_details(request):
         details = explain_cvss_vector(vector_string)
         return JsonResponse(details)
     return JsonResponse({"error": "Invalid vector string"}, status=400)
+
+
+class CVSSSearchListView(ListView):
+    model = Product
+    template_name = "product_CVE/search_by_cvss.html"
+    context_object_name = "products"
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        form = CVSSSearchForm(self.request.GET or None)
+        context["form"] = form
+        return context
+
+    def get_queryset(self):
+        form = CVSSSearchForm(self.request.GET or None)
+        products = []
+
+        if form.is_valid():
+            cvss_vector = form.cleaned_data["cvss_vector"]
+            vulnerabilities = Vulnerability.objects.filter(
+                vector_string__icontains=cvss_vector
+            ).prefetch_related("products")
+
+            for vulnerability in vulnerabilities:
+                products.extend(vulnerability.products.all())
+
+        return products
+
+    def paginate_queryset(self, queryset, page_size):
+        paginator = Paginator(queryset, page_size)
+        page_number = self.request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+        return paginator, page_obj, page_obj.object_list, page_obj.has_other_pages()
