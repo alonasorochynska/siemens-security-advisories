@@ -94,3 +94,19 @@ td .thin-column {
     width: 50px;
     white-space: nowrap;
 }
+
+.my-btn {
+    display: inline-block;
+    justify-content: center;
+    align-items: center;
+    width: 70px;
+    height: 30px;
+    font-size: 13px;
+    color: #0d6efd;
+    text-decoration: none;
+    border-radius: 5px;
+    border: 1px solid #0d6efd;
+    background-color: transparent;
+    box-sizing: border-box;
+}
+

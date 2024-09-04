@@ -1,9 +1,11 @@
 from django.db.models import Avg
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
 
 from product_CVE.forms import ProductSearchForm, VulnerabilitySearchForm
 from product_CVE.models import Product, Vulnerability
+from product_CVE.utils import explain_cvss_vector
 
 
 def index(request):
@@ -105,3 +107,11 @@ class SourceURLListView(ListView):
 
     def get_queryset(self):
         return Product.objects.values("source_url").distinct()
+
+
+def get_cvss_details(request):
+    vector_string = request.GET.get("vector_string", "")
+    if vector_string:
+        details = explain_cvss_vector(vector_string)
+        return JsonResponse(details)
+    return JsonResponse({"error": "Invalid vector string"}, status=400)
