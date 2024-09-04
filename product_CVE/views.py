@@ -118,10 +118,20 @@ def get_cvss_details(request):
     return JsonResponse({"error": "Invalid vector string"}, status=400)
 
 
+def get_all_vectors(request):
+    product_id = request.GET.get('product_id')
+    product = Product.objects.prefetch_related('vulnerability_products').get(id=product_id)
+
+    vulnerabilities = [{"vector_string": vulnerability.vector_string} for vulnerability in
+                       product.vulnerability_products.all()]
+
+    return JsonResponse({"vulnerabilities": vulnerabilities})
+
+
 class CVSSSearchListView(ListView):
     model = Product
     template_name = "product_CVE/search_by_cvss.html"
-    context_object_name = "products"
+    context_object_name = "products_search"
     paginate_by = 10
 
     def get_context_data(self, **kwargs):
@@ -135,24 +145,21 @@ class CVSSSearchListView(ListView):
         products = set()
 
         if form.is_valid():
-            cvss_vector_input = form.cleaned_data["cvss_vector"]
-            cvss_vectors = [vector.strip() for vector in cvss_vector_input.split(",")]
-
-            vulnerabilities = Vulnerability.objects.all()
-            for vector in cvss_vectors:
-                vulnerabilities = vulnerabilities.filter(vector_string__icontains=vector)
-
-            vulnerabilities = vulnerabilities.prefetch_related("products")
+            cvss_vector = form.cleaned_data["cvss_vector"]
+            vulnerabilities = Vulnerability.objects.filter(
+                vector_string__icontains=cvss_vector
+            ).prefetch_related("products")
 
             for vulnerability in vulnerabilities:
                 products.update(vulnerability.products.all())
 
-        return list(products)
+        queryset = Product.objects.filter(
+            id__in=[product.id for product in products]
+        ).prefetch_related("vulnerability_products")
+        return queryset
 
     def paginate_queryset(self, queryset, page_size):
         paginator = Paginator(queryset, page_size)
         page_number = self.request.GET.get("page")
         page_obj = paginator.get_page(page_number)
         return paginator, page_obj, page_obj.object_list, page_obj.has_other_pages()
-
-

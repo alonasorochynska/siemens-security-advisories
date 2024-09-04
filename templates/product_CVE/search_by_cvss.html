@@ -23,17 +23,17 @@
   <table class="table table-bordered table-striped">
     <thead>
     <tr>
-      <th>#</th>
+      <th style="white-space: nowrap;">#</th>
       <th>Name</th>
-      <th style="width: 150px;">Versions</th>
-      <th>CVE IDs</th>
+      <th>Versions</th>
+      <th style="white-space: nowrap; width: 20%">Vector</th>
     </tr>
     </thead>
     <tbody>
-    {% for product in products %}
+    {% for product in products_search %}
     <tr>
-      <td>{{ product.id }}</td>
-      <td style="white-space: nowrap;">
+      <td style="white-space: nowrap; width: 20px">{{ product.id }}</td>
+      <td>
         <a href="{% url 'product_CVE:product_detail' product.id %}" class="product-link">{{ product.name }}</a>
         {% if product.support_url %}
         <span style="color: blue; cursor: help; display: inline;" title="Get support">
@@ -43,9 +43,17 @@
       </td>
       <td>{{ product.version_range }}</td>
       <td>
-        {% for vulnerability in product.vulnerability_products.all %}
-        {{ vulnerability.cve }}{% if not forloop.last %}, {% endif %}
+        {% with product.vulnerability_products.all|length as total_vulnerabilities %}
+        {% for vulnerability in product.vulnerability_products.all|slice:":3" %}
+        {{ vulnerability.vector_string }}
         {% endfor %}
+        {% if total_vulnerabilities > 3 %}
+          <button type="button" class="my-btn" style="margin-left: auto; flex-shrink: 0; height: 100%;"
+                  onclick="showMore('{{ product.id }}')">
+            All
+          </button>
+        {% endif %}
+        {% endwith %}
       </td>
     </tr>
     {% empty %}
@@ -55,6 +63,28 @@
     {% endfor %}
     </tbody>
   </table>
+
+  <!-- Popup block -->
+  <div id="detailsPopup"
+       style="display: none; position: fixed; z-index: 1000; top: 0; left: 0;
+            width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5);">
+    <div style="position: absolute; top: 50%; left: 50%;
+                transform: translate(-50%, -50%); background-color: white;
+                padding: 20px; border-radius: 15px; width: 70%;
+                box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); max-height: 80%;">
+
+        <span id="closePopup"
+              style="color: #aaa; float: right; font-size: 28px;
+                     font-weight: bold; cursor: pointer;">
+            &times;
+        </span>
+
+      <h5 id="cvssTitle">Vector information</h5>
+
+      <div style="max-height: 60vh; overflow-y: auto; padding-right: 10px;" id="detailsContent"></div>
+    </div>
+  </div>
+
 
   <!-- Pagination -->
   {% include "includes/pagination.html" %}
