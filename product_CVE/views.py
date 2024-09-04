@@ -132,21 +132,27 @@ class CVSSSearchListView(ListView):
 
     def get_queryset(self):
         form = CVSSSearchForm(self.request.GET or None)
-        products = []
+        products = set()
 
         if form.is_valid():
-            cvss_vector = form.cleaned_data["cvss_vector"]
-            vulnerabilities = Vulnerability.objects.filter(
-                vector_string__icontains=cvss_vector
-            ).prefetch_related("products")
+            cvss_vector_input = form.cleaned_data["cvss_vector"]
+            cvss_vectors = [vector.strip() for vector in cvss_vector_input.split(",")]
+
+            vulnerabilities = Vulnerability.objects.all()
+            for vector in cvss_vectors:
+                vulnerabilities = vulnerabilities.filter(vector_string__icontains=vector)
+
+            vulnerabilities = vulnerabilities.prefetch_related("products")
 
             for vulnerability in vulnerabilities:
-                products.extend(vulnerability.products.all())
+                products.update(vulnerability.products.all())
 
-        return products
+        return list(products)
 
     def paginate_queryset(self, queryset, page_size):
         paginator = Paginator(queryset, page_size)
         page_number = self.request.GET.get("page")
         page_obj = paginator.get_page(page_number)
         return paginator, page_obj, page_obj.object_list, page_obj.has_other_pages()
+
+
