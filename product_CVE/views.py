@@ -93,6 +93,12 @@ class VulnerabilityListView(ListView):
         return queryset
 
 
+class VulnerabilityDetailView(DetailView):
+    model = Vulnerability
+    template_name = "product_CVE/vulnerability_detail.html"
+    context_object_name = "vulnerability"
+
+
 class SourceURLListView(ListView):
     template_name = "product_CVE/source_url_list.html"
     context_object_name = "source_urls"

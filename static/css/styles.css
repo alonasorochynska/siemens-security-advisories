@@ -30,7 +30,7 @@ select option:checked {
 .cvss-score-input {
     width: 90px;
     padding-left: 5px;
-    padding-right: 0px;
+    padding-right: 0;
 }
 
 /* Pagination */
@@ -83,3 +83,14 @@ td.text-low {
     text-decoration: underline;
 }
 
+/* Other */
+
+.detail-name {
+    color: #0255b0;
+    font-style: italic;
+}
+
+td .thin-column {
+    width: 50px;
+    white-space: nowrap;
+}

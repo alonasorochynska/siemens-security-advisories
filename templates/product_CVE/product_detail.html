@@ -7,7 +7,7 @@
 
 {% block content %}
 <div class="container mt-4">
-  <h4>{{ product.name }}</h4>
+  <h4>Product details for <span class="detail-name">{{ product.name }}</span></h4>
   <table class="table table-bordered table-striped">
     <thead>
     <tr>
@@ -16,13 +16,17 @@
     </thead>
     <tbody>
     <tr>
-      <td>1</td>
-      <td>Version Range</td>
+      <td style="width: 20px; white-space: nowrap;">
+        <li></li>
+      </td>
+      <td>Versions</td>
       <td>{{ product.version_range }}</td>
     </tr>
     {% if product.support_url %}
     <tr>
-      <td>2</td>
+      <td>
+        <li></li>
+      </td>
       <td>Support URL</td>
       <td><a href="{{ product.support_url }}" target="_blank">{{ product.support_url }}</a></td>
     </tr>
@@ -33,7 +37,9 @@
     </tr>
     {% for detail in product.remediation_details|split_string:";" %}
     <tr>
-      <td>{{ forloop.counter|add:2 }}</td>
+      <td>
+        <li></li>
+      </td>
       <td>Detail</td>
       <td>{{ detail }}</td>
     </tr>
@@ -42,15 +48,15 @@
     </tbody>
   </table>
 
-
   <h4>Vulnerabilities</h4>
   <table class="table table-bordered table-striped">
     <thead>
     <tr>
+      <th>#</th>
       <th>CVE ID</th>
-      <th>CWE ID</th>
+      <th>CWE_ID</th>
       <th>CWE Name</th>
-      <th>Base Score</th>
+      <th>Score</th>
       <th>Severity</th>
       <th>CVSS Vector</th>
       <th>Summary</th>
@@ -59,17 +65,34 @@
     <tbody>
     {% for vulnerability in product.vulnerability_products.all %}
     <tr>
-      <td>{{ vulnerability.cve }}</td>
-      <td>{{ vulnerability.cwe_id }}</td>
+      <td>{{ forloop.counter }}</td>
+      <td style="white-space: nowrap;">
+        <a href="{% url 'product_CVE:vulnerability_detail' vulnerability.id %}" class="product-link">
+          {{ vulnerability.cve }}
+        </a>
+      </td>
+      <td style="white-space: nowrap;">{{ vulnerability.cwe_id }}</td>
       <td>{{ vulnerability.cwe_name }}</td>
       <td>{{ vulnerability.base_score }}</td>
-      <td>{{ vulnerability.base_severity }}</td>
+      <td class="
+        {% if vulnerability.base_severity == 'CRITICAL' %}
+            text-critical
+        {% elif vulnerability.base_severity == 'HIGH' %}
+            text-high
+        {% elif vulnerability.base_severity == 'MEDIUM' %}
+            text-medium
+        {% elif vulnerability.base_severity == 'LOW' %}
+            text-low
+        {% endif %}
+      ">
+        {{ vulnerability.base_severity }}
+      </td>
       <td>{{ vulnerability.vector_string }}</td>
       <td>{{ vulnerability.summary }}</td>
     </tr>
     {% empty %}
     <tr>
-      <td colspan="7" class="text-center">No vulnerabilities associated with this product.</td>
+      <td colspan="8" class="text-center">No vulnerabilities associated with this product.</td>
     </tr>
     {% endfor %}
     </tbody>
