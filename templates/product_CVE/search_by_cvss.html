@@ -2,38 +2,40 @@
 {% load crispy_forms_filters %}
 
 {% block title %}
-<title>Products</title>
+<title>Search Products by CVSS Vector</title>
 {% endblock %}
 
 {% block content %}
 <div class="container mt-4">
   <div class="d-flex justify-content-between align-items-center">
-    <h4>Product List</h4>
+    <h4>Search Products by CVSS Vector</h4>
 
     <!-- Search form -->
-    <form class="form-inline d-flex" method="get" action="{% url 'product_CVE:product_list' %}">
-      {{ search_form|crispy }}
+    <form class="form-inline d-flex" method="get" action="{% url 'product_CVE:search_by_cvss' %}">
+      {{ form.cvss_vector|as_crispy_field }}
       <input class="btn btn-outline-primary" type="submit" value="🔎">
-      {% if request.GET.product %}
-      <a href="{% url 'product_CVE:product_list' %}" class="btn btn-outline-secondary ml-2">X</a>
+      {% if request.GET.cvss_vector %}
+      <a href="{% url 'product_CVE:search_by_cvss' %}" class="btn btn-outline-secondary ml-2">X</a>
       {% endif %}
     </form>
   </div>
 
+  {% if request.GET.cvss_vector %}
+
   <table class="table table-bordered table-striped">
     <thead>
     <tr>
-      <th style="white-space: nowrap; width: 20px">#</th>
-      <th style="width: 30%">Name</th>
-      <th style="width: 20%;">Versions</th>
-      <th>CVE IDs</th>
+      <th style="white-space: nowrap;">#</th>
+      <th style="width: 40%">Name</th>
+      <th>Versions</th>
+      <th style="white-space: nowrap; width: 50%">Vector</th>
     </tr>
     </thead>
     <tbody>
-    {% for product in products %}
+    {% for product in products_search %}
     <tr>
-      <td>{{ product.id }}</td>
-      <td style="white-space: nowrap;">
+      <td style="white-space: nowrap; width: 20px">{{ product.id }}</td>
+      <td>
         <a href="{% url 'product_CVE:product_detail' product.id %}" class="product-link">{{ product.name }}</a>
         {% if product.support_url %}
         <span style="color: blue; cursor: help; display: inline;" title="Get support">
@@ -42,17 +44,14 @@
         {% endif %}
       </td>
       <td>{{ product.version_range }}</td>
-      <td>
+      <td style="position: relative;">
         {% with product.vulnerability_products.all|length as total_vulnerabilities %}
-        {% for vulnerability in product.vulnerability_products.all|slice:":5" %}
-        <a href="{% url 'product_CVE:vulnerability_detail' vulnerability.id %}" class="product-link">
-          {{ vulnerability.cve }}
-        </a>
-        {% if not forloop.last %}, {% endif %}
+        {% for vulnerability in product.vulnerability_products.all|slice:":3" %}
+        {{ vulnerability.vector_string }}
         {% endfor %}
-        {% if total_vulnerabilities > 5 %}
-        <button type="button" class="my-btn" style="margin-left: auto; flex-shrink: 0; height: 100%;"
-                onclick="showCVEInfo('{{ product.id }}')">
+        {% if total_vulnerabilities > 3 %}
+        <button type="button" class="my-btn" style="position: absolute; top: 5px; right: 5px;"
+            onclick="showMore('{{ product.id }}')">
           All
         </button>
         {% endif %}
@@ -66,6 +65,10 @@
     {% endfor %}
     </tbody>
   </table>
+
+  {% else %}
+  <div style="text-align: center;">Please input search data.</div>
+  {% endif %}
 
   <!-- Popup block -->
   <div id="detailsPopup"
@@ -82,11 +85,12 @@
             &times;
         </span>
 
-      <h5 id="cvssTitle">CVE information</h5>
+      <h5 id="cvssTitle">Vector information</h5>
 
       <div style="max-height: 60vh; overflow-y: auto; padding-right: 10px;" id="detailsContent"></div>
     </div>
   </div>
+
 
   <!-- Pagination -->
   {% include "includes/pagination.html" %}

@@ -35,3 +35,13 @@ class VulnerabilitySearchForm(forms.Form):
             "placeholder": "CVSS Score", "min": "0", "class": "cvss-score-input"
         }),
     )
+
+
+class CVSSSearchForm(forms.Form):
+    cvss_vector = forms.CharField(
+        max_length=255,
+        required=True,
+        label="",
+        widget=forms.TextInput(attrs={"placeholder": "Search by CVSS Vector. Ex: AC:H"}),
+    )
+

@@ -62,25 +62,36 @@ python manage.py runserver
 
 ## Application Features
 
-* <b>Home</b> Page: Displays statistics related to the database data.
-* <b>Products</b> Page: Lists all products with related data, including references to product details and support
+* <b>Home Page</b>: Displays statistics related to the database data.
+* <b>Products Page</b>: Lists all products with related data, including references to product details and support
   pages (if available). Includes search functionality by product name and pagination.
-* <b>Vulnerabilities</b> Page: Lists vulnerabilities with details, including search functionality by CVE, CVSS Score,
+* <b>Product Detail Page</b>: All detailed information related to product and pagination.
+* <b>Vulnerabilities Page</b>: Lists vulnerabilities with details, including search functionality by CVE, CVSS Score,
   and Severity, allowing multi-field search and pagination.
-* <b>Documents</b> Page: Lists all scraped documents that were used to create the database.
+* <b>Vulnerability Detail Page</b>: All detailed information related to vulnerability and pagination.
+  * Pop-up window with CVSS details.
+* <b>CVSS Vector Page</b>: Page to search products by CVSS Vector.
+  * Pop-up window with CVSS Vectors connected to product.
+* <b>Documents Page</b>: Lists all scraped documents that were used to create the database.
 
 ## Examples
 
 Examples of using the application, including screenshots of pages, are located in the [docs](./docs) directory.
 
-**Home Page**<br>
-<img src="docs/home.jpg" alt="Home Page Example" width="500"/>
-
 **Products Page**<br>
-  <img src="docs/products.jpg" alt="Products Page Example" width="500"/>
+  <img src="docs/product_list.jpg" width="500"/>
+
+**Product Details Page**<br>
+  <img src="docs/product_details.jpg" width="500"/>
 
 **Vulnerabilities Page**<br>
-  <img src="docs/vulnerabilities.jpg" alt="Vulnerabilities Page Example" width="500"/>
+  <img src="docs/vulnerability_list.jpg" width="500"/>
+
+**Vulnerability Details Page**<br>
+  <img src="docs/vulnerability_details.jpg" width="500"/>
+
+**CVSS Vector Page**<br>
+  <img src="docs/search_by_cvss_vector.jpg" width="500"/>
 
 <hr>
 
