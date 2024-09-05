@@ -24,8 +24,8 @@
     <thead>
     <tr>
       <th style="white-space: nowrap; width: 20px">#</th>
-      <th>Name</th>
-      <th style="width: 150px;">Versions</th>
+      <th style="width: 30%">Name</th>
+      <th style="width: 20%;">Versions</th>
       <th>CVE IDs</th>
     </tr>
     </thead>
@@ -44,13 +44,13 @@
       <td>{{ product.version_range }}</td>
       <td>
         {% with product.vulnerability_products.all|length as total_vulnerabilities %}
-        {% for vulnerability in product.vulnerability_products.all|slice:":10" %}
+        {% for vulnerability in product.vulnerability_products.all|slice:":5" %}
         <a href="{% url 'product_CVE:vulnerability_detail' vulnerability.id %}" class="product-link">
           {{ vulnerability.cve }}
         </a>
         {% if not forloop.last %}, {% endif %}
         {% endfor %}
-        {% if total_vulnerabilities > 10 %}
+        {% if total_vulnerabilities > 5 %}
         <button type="button" class="my-btn" style="margin-left: auto; flex-shrink: 0; height: 100%;"
                 onclick="showCVEInfo('{{ product.id }}')">
           All

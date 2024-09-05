@@ -26,9 +26,9 @@
     <thead>
     <tr>
       <th style="white-space: nowrap;">#</th>
-      <th>Name</th>
+      <th style="width: 40%">Name</th>
       <th>Versions</th>
-      <th style="white-space: nowrap; width: 20%">Vector</th>
+      <th style="white-space: nowrap; width: 50%">Vector</th>
     </tr>
     </thead>
     <tbody>
@@ -44,14 +44,14 @@
         {% endif %}
       </td>
       <td>{{ product.version_range }}</td>
-      <td>
+      <td style="position: relative;">
         {% with product.vulnerability_products.all|length as total_vulnerabilities %}
         {% for vulnerability in product.vulnerability_products.all|slice:":3" %}
         {{ vulnerability.vector_string }}
         {% endfor %}
         {% if total_vulnerabilities > 3 %}
-        <button type="button" class="my-btn" style="margin-left: auto; flex-shrink: 0; height: 100%;"
-                onclick="showMore('{{ product.id }}')">
+        <button type="button" class="my-btn" style="position: absolute; top: 5px; right: 5px;"
+            onclick="showMore('{{ product.id }}')">
           All
         </button>
         {% endif %}

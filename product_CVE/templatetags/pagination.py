@@ -15,7 +15,7 @@ def query_transform(request, **kwargs):
 
 
 @register.simple_tag
-def pagination_range(page_obj, boundaries=2, around=1):
+def pagination_range(page_obj, boundaries=2, around=2):
     current_page = page_obj.number
     total_pages = page_obj.paginator.num_pages
 

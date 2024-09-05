@@ -49,8 +49,8 @@
   </table>
 
   <h4>Vulnerabilities</h4>
-  <table class="table table-bordered table-striped">
-    <thead>
+<table class="table table-bordered table-striped">
+  <thead>
     <tr>
       <th>#</th>
       <th>CVE ID</th>
@@ -61,11 +61,11 @@
       <th>CVSS Vector</th>
       <th>Summary</th>
     </tr>
-    </thead>
-    <tbody>
-    {% for vulnerability in product.vulnerability_products.all %}
+  </thead>
+  <tbody>
+    {% for vulnerability in vulnerabilities %}
     <tr>
-      <td>{{ forloop.counter }}</td>
+      <td>{{ vulnerability.id }}</td>
       <td style="white-space: nowrap;">
         <a href="{% url 'product_CVE:vulnerability_detail' vulnerability.id %}" class="product-link">
           {{ vulnerability.cve }}
@@ -73,7 +73,7 @@
       </td>
       <td style="white-space: nowrap;">{{ vulnerability.cwe_id }}</td>
       <td>{{ vulnerability.cwe_name }}</td>
-      <td>{{ vulnerability.base_score }}</td>
+      <td><b>{{ vulnerability.base_score }}</b></td>
       <td class="
         {% if vulnerability.base_severity == 'CRITICAL' %}
             text-critical
@@ -95,8 +95,11 @@
       <td colspan="8" class="text-center">No vulnerabilities associated with this product.</td>
     </tr>
     {% endfor %}
-    </tbody>
-  </table>
+  </tbody>
+</table>
+
+  <!-- Pagination -->
+  {% include "includes/pagination.html" with page_obj=page_obj %}
 
   {% if product.source_url %}
   <p><strong>Data provided based on this document:</strong> <a href="{{ product.source_url }}"

@@ -61,6 +61,20 @@ class ProductDetailView(DetailView):
     model = Product
     template_name = "product_CVE/product_detail.html"
     context_object_name = "product"
+    paginate_by = 3
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        vulnerabilities = self.object.vulnerability_products.all()
+        paginator = Paginator(vulnerabilities, self.paginate_by)
+        page = self.request.GET.get("page")
+
+        vulnerabilities_page = paginator.get_page(page)
+        context["vulnerabilities"] = vulnerabilities_page
+        context["is_paginated"] = vulnerabilities_page.has_other_pages()
+        context["page_obj"] = vulnerabilities_page
+
+        return context
 
 
 class VulnerabilityListView(ListView):
@@ -68,7 +82,7 @@ class VulnerabilityListView(ListView):
     template_name = "product_CVE/vulnerability_list.html"
     context_object_name = "vulnerabilities"
     queryset = Vulnerability.objects.prefetch_related("products").all()
-    paginate_by = 10
+    paginate_by = 7
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -91,7 +105,7 @@ class VulnerabilityListView(ListView):
             if severity:
                 queryset = queryset.filter(base_severity=severity)
             if cvss_score is not None:
-                if cvss_score.is_integer():
+                if "." not in str(self.request.GET.get("cvss_score")):
                     queryset = queryset.filter(base_score__gte=cvss_score, base_score__lt=cvss_score + 1)
                 else:
                     queryset = queryset.filter(base_score=cvss_score)
@@ -103,6 +117,20 @@ class VulnerabilityDetailView(DetailView):
     model = Vulnerability
     template_name = "product_CVE/vulnerability_detail.html"
     context_object_name = "vulnerability"
+    paginate_by = 5
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        related_products = self.object.products.all()
+        paginator = Paginator(related_products, self.paginate_by)
+        page = self.request.GET.get("page")
+
+        products_page = paginator.get_page(page)
+        context["products"] = products_page
+        context["is_paginated"] = products_page.has_other_pages()
+        context["page_obj"] = products_page
+
+        return context
 
 
 class SourceURLListView(ListView):
@@ -171,7 +199,7 @@ class CVSSSearchListView(ListView):
     model = Product
     template_name = "product_CVE/search_by_cvss.html"
     context_object_name = "products_search"
-    paginate_by = 10
+    paginate_by = 7
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
