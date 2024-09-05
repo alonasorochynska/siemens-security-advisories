@@ -42,6 +42,6 @@ class CVSSSearchForm(forms.Form):
         max_length=255,
         required=True,
         label="",
-        widget=forms.TextInput(attrs={"placeholder": "Search by CVSS Vector"}),
+        widget=forms.TextInput(attrs={"placeholder": "Search by CVSS Vector. Ex: AC:H"}),
     )
 

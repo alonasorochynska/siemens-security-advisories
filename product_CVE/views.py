@@ -27,6 +27,7 @@ def index(request):
         "medium_severity_vulnerabilities_count": medium_severity_vulnerabilities_count,
         "low_severity_vulnerabilities_count": low_severity_vulnerabilities_count,
     }
+
     return render(request, "index.html", context)
 
 
@@ -41,15 +42,18 @@ class ProductListView(ListView):
         context = super().get_context_data(**kwargs)
         product_name = self.request.GET.get("product", "")
         context["search_form"] = ProductSearchForm(initial={"product": product_name})
+
         return context
 
     def get_queryset(self):
         queryset = super().get_queryset()
         form = ProductSearchForm(self.request.GET)
+
         if form.is_valid():
             product_name = form.cleaned_data["product"]
             if product_name:
                 queryset = queryset.filter(name__icontains=product_name)
+
         return queryset
 
 
@@ -64,12 +68,13 @@ class VulnerabilityListView(ListView):
     template_name = "product_CVE/vulnerability_list.html"
     context_object_name = "vulnerabilities"
     queryset = Vulnerability.objects.prefetch_related("products").all()
-    paginate_by = 5
+    paginate_by = 10
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         form = VulnerabilitySearchForm(self.request.GET)
         context["search_form"] = form
+
         return context
 
     def get_queryset(self):
@@ -83,10 +88,8 @@ class VulnerabilityListView(ListView):
 
             if cve:
                 queryset = queryset.filter(cve__icontains=cve)
-
             if severity:
                 queryset = queryset.filter(base_severity=severity)
-
             if cvss_score is not None:
                 if cvss_score.is_integer():
                     queryset = queryset.filter(base_score__gte=cvss_score, base_score__lt=cvss_score + 1)
@@ -105,6 +108,7 @@ class VulnerabilityDetailView(DetailView):
 class SourceURLListView(ListView):
     template_name = "product_CVE/source_url_list.html"
     context_object_name = "source_urls"
+    paginate_by = 15
 
     def get_queryset(self):
         return Product.objects.values("source_url").distinct()
@@ -112,20 +116,55 @@ class SourceURLListView(ListView):
 
 def get_cvss_details(request):
     vector_string = request.GET.get("vector_string", "")
+
     if vector_string:
         details = explain_cvss_vector(vector_string)
+
         return JsonResponse(details)
+
     return JsonResponse({"error": "Invalid vector string"}, status=400)
 
 
 def get_all_vectors(request):
     product_id = request.GET.get('product_id')
     product = Product.objects.prefetch_related('vulnerability_products').get(id=product_id)
-
     vulnerabilities = [{"vector_string": vulnerability.vector_string} for vulnerability in
                        product.vulnerability_products.all()]
 
     return JsonResponse({"vulnerabilities": vulnerabilities})
+
+
+def get_cve_info(request):
+    product_id = request.GET.get("product_id")
+
+    if product_id:
+        product = Product.objects.prefetch_related("vulnerability_products").get(id=product_id)
+        vulnerabilities = product.vulnerability_products.all()
+        vulnerability_data = []
+
+        for vulnerability in vulnerabilities:
+            vulnerability_data.append({
+                "id": vulnerability.id,
+                "cve": vulnerability.cve,
+            })
+
+        return JsonResponse({"vulnerabilities": vulnerability_data})
+
+
+def get_product_info(request):
+    vulnerability_id = request.GET.get("vulnerability_id")
+    if vulnerability_id:
+        vulnerability = Vulnerability.objects.prefetch_related("products").get(id=vulnerability_id)
+        products = vulnerability.products.all()
+
+        product_data = []
+        for product in products:
+            product_data.append({
+                "id": product.id,
+                "name": product.name
+            })
+
+        return JsonResponse({"products": product_data})
 
 
 class CVSSSearchListView(ListView):
@@ -138,6 +177,7 @@ class CVSSSearchListView(ListView):
         context = super().get_context_data(**kwargs)
         form = CVSSSearchForm(self.request.GET or None)
         context["form"] = form
+
         return context
 
     def get_queryset(self):
@@ -156,10 +196,12 @@ class CVSSSearchListView(ListView):
         queryset = Product.objects.filter(
             id__in=[product.id for product in products]
         ).prefetch_related("vulnerability_products")
+
         return queryset
 
     def paginate_queryset(self, queryset, page_size):
         paginator = Paginator(queryset, page_size)
         page_number = self.request.GET.get("page")
         page_obj = paginator.get_page(page_number)
+
         return paginator, page_obj, page_obj.object_list, page_obj.has_other_pages()

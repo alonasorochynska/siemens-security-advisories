@@ -62,12 +62,17 @@ python manage.py runserver
 
 ## Application Features
 
-* <b>Home</b> Page: Displays statistics related to the database data.
-* <b>Products</b> Page: Lists all products with related data, including references to product details and support
+* <b>Home Page</b>: Displays statistics related to the database data.
+* <b>Products Page</b>: Lists all products with related data, including references to product details and support
   pages (if available). Includes search functionality by product name and pagination.
-* <b>Vulnerabilities</b> Page: Lists vulnerabilities with details, including search functionality by CVE, CVSS Score,
+* <b>Product Detail Page</b>: All detailed information related to product.
+* <b>Vulnerabilities Page</b>: Lists vulnerabilities with details, including search functionality by CVE, CVSS Score,
   and Severity, allowing multi-field search and pagination.
-* <b>Documents</b> Page: Lists all scraped documents that were used to create the database.
+* <b>Vulnerability Detail Page</b>: All detailed information related to vulnerability.
+  * Pop-up window with CVSS details.
+* <b>CVSS Vector Page</b>: Page to search products by CVSS Vector.
+  * Pop-up window with CVSS Vectors connected to product.
+* <b>Documents Page</b>: Lists all scraped documents that were used to create the database.
 
 ## Examples
 
@@ -79,8 +84,14 @@ Examples of using the application, including screenshots of pages, are located i
 **Products Page**<br>
   <img src="docs/products.jpg" alt="Products Page Example" width="500"/>
 
+**Product Detail Page**<br>
+
 **Vulnerabilities Page**<br>
   <img src="docs/vulnerabilities.jpg" alt="Vulnerabilities Page Example" width="500"/>
+
+**Vulnerability Detail Page**<br>
+
+**CVSS Vector Page**<br>
 
 <hr>
 

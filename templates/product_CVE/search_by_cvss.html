@@ -20,6 +20,8 @@
     </form>
   </div>
 
+  {% if request.GET.cvss_vector %}
+
   <table class="table table-bordered table-striped">
     <thead>
     <tr>
@@ -48,10 +50,10 @@
         {{ vulnerability.vector_string }}
         {% endfor %}
         {% if total_vulnerabilities > 3 %}
-          <button type="button" class="my-btn" style="margin-left: auto; flex-shrink: 0; height: 100%;"
-                  onclick="showMore('{{ product.id }}')">
-            All
-          </button>
+        <button type="button" class="my-btn" style="margin-left: auto; flex-shrink: 0; height: 100%;"
+                onclick="showMore('{{ product.id }}')">
+          All
+        </button>
         {% endif %}
         {% endwith %}
       </td>
@@ -63,6 +65,10 @@
     {% endfor %}
     </tbody>
   </table>
+
+  {% else %}
+  <div style="text-align: center;">Please input search data.</div>
+  {% endif %}
 
   <!-- Popup block -->
   <div id="detailsPopup"
